@@ -1,0 +1,43 @@
+name: Deploy Portfolio
+
+on:
+  push:
+    branches:
+      - main  # Replace 'main' with the branch you use for production if it's different
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the code
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Step 2: Set up Node.js environment
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'  # You can adjust the version if needed
+
+      # Step 3: Install dependencies
+      - name: Install dependencies
+        run: npm install
+
+      # Step 4: Build the project
+      - name: Build the project
+        run: npm run build
+        env:
+          VITE_EMAILJS_SERVICE_ID: ${{ secrets.VITE_EMAILJS_SERVICE_ID }}
+          VITE_EMAILJS_TEMPLATE_ID: ${{ secrets.VITE_EMAILJS_TEMPLATE_ID }}
+          VITE_EMAILJS_PUBLIC_KEY: ${{ secrets.VITE_EMAILJS_PUBLIC_KEY }}
+          VITE_GITHUB_ACCESS_TOKEN: ${{ secrets.VITE_GITHUB_ACCESS_TOKEN }}
+
+      # Step 5: Deploy to GitHub Pages (or your preferred deployment method)
+      - name: Deploy to GitHub Pages
+        run: npm run deploy
+        env:
+          VITE_EMAILJS_SERVICE_ID: ${{ secrets.VITE_EMAILJS_SERVICE_ID }}
+          VITE_EMAILJS_TEMPLATE_ID: ${{ secrets.VITE_EMAILJS_TEMPLATE_ID }}
+          VITE_EMAILJS_PUBLIC_KEY: ${{ secrets.VITE_EMAILJS_PUBLIC_KEY }}
+          VITE_GITHUB_ACCESS_TOKEN: ${{ secrets.VITE_GITHUB_ACCESS_TOKEN }}
