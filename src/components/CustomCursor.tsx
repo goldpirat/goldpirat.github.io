@@ -1,35 +1,14 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
+import { useIsMobile } from '../hooks/use-mobile'; // Adjust the path if needed
 
 const CustomCursor = () => {
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [isPointer, setIsPointer] = useState(false);
-  const [isDesktop, setIsDesktop] = useState(false);
+  const isMobile = useIsMobile(); // Use the hook
 
   useEffect(() => {
-    // Basic desktop detection (adjust as needed)
-    const handleResize = () => {
-      setIsDesktop(window.innerWidth > 768); // Example breakpoint
-    };
-
-    handleResize(); // Initial check
-    window.addEventListener('resize', handleResize);
-
-    // Touch detection
-    const hasTouchScreen = 'ontouchstart' in window || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0;
-
-    //Update Desktop state based on touch capability.
-    if(hasTouchScreen){
-      setIsDesktop(false);
-    }
-
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, []);
-
-  useEffect(() => {
-    if (!isDesktop) return; // Only add mousemove listener on desktop
+    if (isMobile) return; // Don't add mousemove listener on mobile
 
     const updatePosition = (e: MouseEvent) => {
       setPosition({ x: e.clientX, y: e.clientY });
@@ -44,9 +23,9 @@ const CustomCursor = () => {
 
     window.addEventListener('mousemove', updatePosition);
     return () => window.removeEventListener('mousemove', updatePosition);
-  }, [isDesktop]);
+  }, [isMobile]);
 
-  if (!isDesktop) {
+  if (isMobile) {
     return null; // Don't render cursor on mobile
   }
 
